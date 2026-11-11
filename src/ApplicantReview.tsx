@@ -3,8 +3,7 @@ import type {User} from "@supabase/supabase-js";
 import {supabase} from "./supabase";
 type Job={id:string;title:string};
 type Question={text:string;required:boolean;expected_answer?:boolean};
-type Applicant={id:string;job_id:string;applicant_id:string;answers:(boolean|null)[];cover_note:string;screening_snapshot:Question[];screening_snapshot_source:string;screening_result:string;screening_explanation:string;review_status:string;created_at:string};
-type Profile={id:string;full_name:string;account_type:string};
+type Applicant={id:string;job_id:string;applicant_id:string;applicant_name:string;answers:(boolean|null)[];cover_note:string;screening_snapshot:Question[];screening_snapshot_source:string;screening_result:string;screening_explanation:string;review_status:string;created_at:string};
 const groups=[["meets_requirements","Meets Requirements"],["needs_review","Needs Review"],["does_not_meet_requirements","Does Not Meet Requirements"]] as const;
 function outcome(q:Question,answer:boolean|null):string{
  if(!q.required)return "Preferred — human review";
@@ -13,7 +12,7 @@ function outcome(q:Question,answer:boolean|null):string{
  return answer===q.expected_answer?"Essential requirement matched":"Essential requirement not matched";
 }
 export default function ApplicantReview({user}:{user:User}){
- const [jobs,setJobs]=useState<Job[]>([]),[apps,setApps]=useState<Applicant[]>([]),[profiles,setProfiles]=useState<Record<string,Profile>>({}),[message,setMessage]=useState(""),[loading,setLoading]=useState(true);
+ const [jobs,setJobs]=useState<Job[]>([]),[apps,setApps]=useState<Applicant[]>([]),[message,setMessage]=useState(""),[loading,setLoading]=useState(true);
  useEffect(()=>{let alive=true;async function load(){
   if(!supabase)return;
   const {data:orgs,error:oe}=await supabase.from("organisations").select("id").eq("owner_id",user.id);
@@ -25,21 +24,16 @@ export default function ApplicantReview({user}:{user:User}){
   const list=(jobData||[]) as Job[];
   if(alive)setJobs(list);
   if(!list.length){if(alive)setLoading(false);return;}
-  const {data,error}=await supabase.from("job_applications").select("id,job_id,applicant_id,answers,cover_note,screening_snapshot,screening_snapshot_source,screening_result,screening_explanation,review_status,created_at").in("job_id",list.map(j=>j.id)).order("created_at",{ascending:false});
+  const {data,error}=await supabase.from("job_applications").select("id,job_id,applicant_id,applicant_name,answers,cover_note,screening_snapshot,screening_snapshot_source,screening_result,screening_explanation,review_status,created_at").in("job_id",list.map(j=>j.id)).order("created_at",{ascending:false});
   if(error){if(alive){setMessage(error.message);setLoading(false);}return;}
   const applications=(data||[]) as Applicant[];
   if(alive)setApps(applications);
-  const applicantIds=[...new Set(applications.map(a=>a.applicant_id))];
-  if(applicantIds.length){
-   const {data:people,error:pe}=await supabase.from("profiles").select("id,full_name,account_type").in("id",applicantIds);
-   if(alive){if(pe)setMessage("Applications loaded, but applicant names could not be retrieved: "+pe.message);else setProfiles(Object.fromEntries(((people||[]) as Profile[]).map(p=>[p.id,p])));}
-  }
   if(alive)setLoading(false);
  }void load();return()=>{alive=false;};},[user.id]);
  async function update(app:Applicant,status:string){if(!supabase)return;setMessage("");const {data,error}=await supabase.from("job_applications").update({review_status:status}).eq("id",app.id).select("id,review_status").single();if(error)setMessage(error.message);else if(data)setApps(prev=>prev.map(a=>a.id===app.id?{...a,review_status:status}:a));}
  return <section className="panel"><div className="panel-head"><div><h2>Applicant review</h2><p>Screening is informational. Only the reviewer changes hiring status.</p></div><span className="tag">Human review</span></div>
  {loading?<p>Loading applications...</p>:apps.length===0?<p>No applications received yet.</p>:groups.map(([key,label])=><div className="review-group" key={key}><h3>{label} ({apps.filter(a=>a.screening_result===key).length})</h3>{apps.filter(a=>a.screening_result===key).map(a=><article className="review-card" key={a.id}>
-  <h3>{profiles[a.applicant_id]?.full_name||"Applicant"} — {jobs.find(j=>j.id===a.job_id)?.title||"Job"}</h3>
+  <h3>{a.applicant_name||"Applicant"} — {jobs.find(j=>j.id===a.job_id)?.title||"Job"}</h3>
   <p>Applicant reference: {a.applicant_id.slice(0,8)} · Submitted {new Date(a.created_at).toLocaleDateString("en-AU")}</p>
   <p><strong>Screening:</strong> {a.screening_explanation}</p>
   {a.screening_snapshot_source!=="submission"&&<p className="job-status">Legacy application: questions shown are reconstructed from the currently available job record and may differ from those originally submitted.</p>}
