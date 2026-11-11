@@ -1,6 +1,7 @@
 import {useEffect,useState} from "react";
 import type {User} from "@supabase/supabase-js";
 import {supabase} from "./supabase";
+import DocumentSharing from "./DocumentSharing";
 type Entry={name:string;detail:string};
 type CandidateProfile={headline:string;preferred_location:string;summary:string;availability:string;experience:Entry[];qualifications:Entry[];licences:Entry[]};
 type Doc={id:string;storage_path:string;document_type:string;original_filename:string;verification_status:string;created_at:string};
@@ -34,6 +35,7 @@ export default function CandidateProfileHub({user}:{user:User}){
  <div className="document-uploads">{(["resume","qualification","licence","other"] as const).map(kind=><label key={kind} className="upload-choice">Upload {kind}<input type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" disabled={busy} onChange={e=>{const file=e.target.files?.[0]||null;void upload(file,kind);e.target.value="";}}/></label>)}</div>
  {docs.length===0?<p>No documents uploaded yet.</p>:<div className="jobs">{docs.map(doc=><article className="job" key={doc.id}><div><strong>{doc.original_filename}</strong><p>{doc.document_type} · {doc.verification_status.replace(/_/g," ")}</p></div><button onClick={()=>void view(doc)}>View</button><button disabled={busy} onClick={()=>void remove(doc)}>Delete</button></article>)}</div>}
  </section>
+ <DocumentSharing user={user}/>
  {notice&&<section className="panel"><p role="status">{notice}</p></section>}
  </div>;
 }
