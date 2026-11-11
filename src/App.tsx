@@ -1,3 +1,4 @@
+import AuthScreen from "./AuthScreen";
 import { useState } from "react";
 import { BriefcaseBusiness, Building2, Users, MessageSquare, Filter, CalendarDays, LayoutDashboard, ShieldCheck } from "lucide-react";
 
@@ -14,13 +15,14 @@ const sampleJobs = [
 ];
 export default function App() {
   const [role, setRole] = useState<Role>("Employer");
+  const [showAuth,setShowAuth]=useState(false);
   const [page, setPage] = useState("Overview");
   const [search, setSearch] = useState("");
   const icons = [BriefcaseBusiness, Users, Filter, MessageSquare];
   const metrics = role === "Employer" ? [["Active jobs", "3"], ["Applications", "49"], ["To review", "12"], ["Interviews", "4"]] :
     role === "Agency" ? [["Active clients", "8"], ["Open roles", "16"], ["Candidates", "142"], ["Submissions", "21"]] :
     [["Saved jobs", "6"], ["Applications", "4"], ["Messages", "2"], ["Interviews", "1"]];
-  return <div className="shell">
+  return showAuth ? <AuthScreen onBack={()=>setShowAuth(false)}/> : <div className="shell">
     <aside className="sidebar">
       <div className="brand"><span className="brandmark"><BriefcaseBusiness size={22}/></span><span>Hire<span className="accent">Flow</span><small>SMART RECRUITMENT</small></span></div>
       <div className="workspace-label">DEMO WORKSPACE</div>
@@ -31,7 +33,7 @@ export default function App() {
       <div className="sidebar-foot"><ShieldCheck size={17}/> Demo only · No live applicant data</div>
     </aside>
     <main className="main">
-      <header><div><span className="eyebrow">{role.toUpperCase()} WORKSPACE</span><h1>{page==="Overview"?"Recruitment overview":page}</h1><p>Manage hiring in one place, without endless phone calls.</p></div><span className="demo-pill">Prototype · Not connected</span></header>
+      <header><div><span className="eyebrow">{role.toUpperCase()} WORKSPACE</span><h1>{page==="Overview"?"Recruitment overview":page}</h1><p>Manage hiring in one place, without endless phone calls.</p></div><button className="demo-pill auth-open" onClick={()=>setShowAuth(true)}>Register / Sign in</button></header>
       {page==="Overview" ? <>
         <section className="metrics">{metrics.map(([label,value],i)=>{const Icon=icons[i];return <article className="metric" key={label}><div className="metric-icon"><Icon size={20}/></div><span>{label}</span><strong>{value}</strong></article>;})}</section>
         <section className="panel"><div className="panel-head"><div><h2>{role==="Jobseeker"?"Explore opportunities":"Recent job advertisements"}</h2><p>Sample listings for the first HireFlow dashboard.</p></div><span className="tag">Sample data</span></div>
