@@ -24,3 +24,6 @@ Never use Clubhouse project credentials. Only the Supabase publishable key belon
 - Organisation owner membership rows are not yet provisioned; ownership is enforced via `organisations.owner_id`.
 - Role data in user metadata is only a sign-up preference, not an authorisation claim.
 - No production deployment is authorised.
+
+## Deployment verification update
+The separate Vercel Git-linked project is `hireflow-preview` (production branch `main`). The direct API deploy incorrectly classified `development` as production and was canceled. Only an actual Preview-target deployment is acceptable. Verify deployment target and build before user testing.
