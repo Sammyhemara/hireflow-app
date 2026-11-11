@@ -1,0 +1,11 @@
+import {useEffect,useState} from "react";
+import {supabase} from "./supabase";
+type Shared={id:string;application_id:string;document_id:string;expires_at:string};
+type Doc={id:string;storage_path:string;original_filename:string;verification_status:string;document_type:string};
+export default function SharedApplicantDocuments({applicationIds}:{applicationIds:string[]}){
+ const [shares,setShares]=useState<Shared[]>([]),[docs,setDocs]=useState<Doc[]>([]),[message,setMessage]=useState("");
+ useEffect(()=>{let active=true;async function load(){if(!supabase||!applicationIds.length)return;const {data,error}=await supabase.from("candidate_document_shares").select("id,application_id,document_id,expires_at").in("application_id",applicationIds).is("revoked_at",null).gt("expires_at",new Date().toISOString());if(error){if(active)setMessage(error.message);return;}const shared=(data||[]) as Shared[];if(active)setShares(shared);if(shared.length){const d=await supabase.from("candidate_documents").select("id,storage_path,original_filename,verification_status,document_type").in("id",shared.map(x=>x.document_id));if(active){if(d.error)setMessage(d.error.message);else setDocs((d.data||[]) as Doc[]);}}}void load();return()=>{active=false;};},[applicationIds.join(",")]);
+ async function view(doc:Doc){if(!supabase)return;const {data,error}=await supabase.storage.from("hireflow-candidate-documents").createSignedUrl(doc.storage_path,60);if(error)setMessage(error.message);else if(data?.signedUrl)window.open(data.signedUrl,"_blank","noopener,noreferrer");}
+ if(!shares.length&&!message)return null;
+ return <div className="screening-details"><h4>Candidate-shared documents</h4><p>Candidate-authorised access only. Uploaded documents are not independently verified unless explicitly marked verified.</p>{shares.map(s=>{const d=docs.find(x=>x.id===s.document_id);return d?<div className="screening-detail" key={s.id}><strong>{d.original_filename}</strong><p>{d.document_type} · {d.verification_status.replace(/_/g," ")} · Expires {new Date(s.expires_at).toLocaleDateString("en-AU")}</p><button onClick={()=>void view(d)}>View shared document</button></div>:null;})}{message&&<p role="status">{message}</p>}</div>;
+}
