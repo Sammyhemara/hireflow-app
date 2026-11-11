@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "./supabase";
+import AccountHome from "./AccountHome";
 import AuthScreen from "./AuthScreen";
 import { useState } from "react";
 import { BriefcaseBusiness, Building2, Users, MessageSquare, Filter, CalendarDays, LayoutDashboard, ShieldCheck } from "lucide-react";
@@ -16,13 +20,16 @@ const sampleJobs = [
 export default function App() {
   const [role, setRole] = useState<Role>("Employer");
   const [showAuth,setShowAuth]=useState(false);
+  const [user,setUser]=useState<User|null>(null);
+  const [checking,setChecking]=useState(true);
+  useEffect(()=>{if(!supabase){setChecking(false);return;}const client=supabase;client.auth.getUser().then(({data})=>{setUser(data.user);setChecking(false);});const {data:{subscription}}=client.auth.onAuthStateChange((_event,session)=>{setUser(session?.user??null);setChecking(false);});return()=>subscription.unsubscribe();},[]);
   const [page, setPage] = useState("Overview");
   const [search, setSearch] = useState("");
   const icons = [BriefcaseBusiness, Users, Filter, MessageSquare];
   const metrics = role === "Employer" ? [["Active jobs", "3"], ["Applications", "49"], ["To review", "12"], ["Interviews", "4"]] :
     role === "Agency" ? [["Active clients", "8"], ["Open roles", "16"], ["Candidates", "142"], ["Submissions", "21"]] :
     [["Saved jobs", "6"], ["Applications", "4"], ["Messages", "2"], ["Interviews", "1"]];
-  return showAuth ? <AuthScreen onBack={()=>setShowAuth(false)}/> : <div className="shell">
+  return checking ? <div className="auth-page">Loading HireFlow...</div> : user ? <AccountHome user={user} onSignOut={()=>{void supabase?.auth.signOut();}}/> : showAuth ? <AuthScreen onBack={()=>setShowAuth(false)}/> : <div className="shell">
     <aside className="sidebar">
       <div className="brand"><span className="brandmark"><BriefcaseBusiness size={22}/></span><span>Hire<span className="accent">Flow</span><small>SMART RECRUITMENT</small></span></div>
       <div className="workspace-label">DEMO WORKSPACE</div>
