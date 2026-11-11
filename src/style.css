@@ -50,3 +50,74 @@
 .document-uploads{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0}
 .upload-choice{display:flex;flex-direction:column;gap:8px;min-width:180px;padding:12px;border:1px solid #d8dfeb;border-radius:10px;font-size:13px;font-weight:600}
 .upload-choice input{max-width:230px;font-size:12px}
+
+
+/* HireFlow 2026 visual refresh: consistent professional product system */
+:root{--hf-ink:#172640;--hf-muted:#64748b;--hf-line:#e4eaf3;--hf-blue:#256be8;--hf-radius:18px}
+body{background:#f5f7fb;color:var(--hf-ink)}
+.shell{background:linear-gradient(145deg,#f4f7fc 0%,#f9fbff 58%,#f3f7fd 100%)}
+.sidebar{width:272px;background:linear-gradient(180deg,#0e1c33 0%,#132746 100%);border-right:1px solid #ffffff10;box-shadow:12px 0 32px #1324420a;position:sticky;top:0;height:100vh}
+.sidebar nav{gap:5px}
+.sidebar nav button{font-weight:600;transition:background .18s,color .18s,transform .18s}
+.sidebar nav button:hover{transform:translateX(2px);background:#ffffff14}
+.sidebar nav button.active{background:linear-gradient(90deg,#256be8,#327ff3);color:white;box-shadow:0 7px 20px #0a3b9d44}
+.brandmark{background:linear-gradient(145deg,#428cff,#1e64df);box-shadow:0 6px 16px #1b66e74a}
+.main{max-width:1500px;padding:42px clamp(22px,3.5vw,64px)}
+header{padding-bottom:19px;border-bottom:1px solid #e7edf5;margin-bottom:28px}
+header h1{font-size:clamp(27px,2.6vw,36px);letter-spacing:-1.3px}
+header p{font-size:13px}
+.eyebrow{color:#3877d7}
+.metric,.panel,.next{border:1px solid #e6ebf3;border-radius:var(--hf-radius);box-shadow:0 6px 24px #1c31500a}
+.metric{transition:transform .18s,box-shadow .18s}
+.metric:hover{transform:translateY(-2px);box-shadow:0 12px 28px #1c315016}
+.panel{padding:clamp(20px,2.2vw,30px)}
+.panel h2{font-size:20px;letter-spacing:-.5px}
+.panel h3{color:#1a2a46}
+button{transition:filter .16s,transform .16s,box-shadow .16s}
+button:not(:disabled):hover{filter:brightness(.97)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #8eb9ff;outline-offset:2px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.auth-submit,.job-actions .auth-submit{background:linear-gradient(110deg,#2268df,#397ff1);box-shadow:0 5px 16px #266de82b;border-radius:11px;padding:13px 20px}
+.tag,.demo-pill{background:#eaf2ff;color:#1e60bf}
+.review-card{padding:23px;border-radius:14px;background:linear-gradient(145deg,#fff,#fbfcff);box-shadow:0 4px 16px #122e5208}
+.job-form-grid input,.job-form-grid textarea,.job-form-grid select,.profile-entry input{border-radius:11px;min-height:44px;transition:border-color .18s,box-shadow .18s}
+.job-form-grid input:focus,.job-form-grid textarea:focus,.job-form-grid select:focus,.profile-entry input:focus{border-color:#397ff1;box-shadow:0 0 0 3px #397ff119;outline:none}
+.candidate-hub{gap:20px}
+.candidate-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:28px;align-items:center;background:linear-gradient(115deg,#0d2144 0%,#17438d 57%,#236ce2 100%);color:white;border-radius:24px;padding:34px clamp(24px,4vw,52px);box-shadow:0 18px 40px #153b7b24}
+.candidate-hero:before{content:"";position:absolute;width:420px;height:420px;border:1px solid #ffffff24;border-radius:50%;right:-110px;top:-220px;box-shadow:0 0 0 62px #ffffff08,0 0 0 125px #ffffff06;pointer-events:none}
+.candidate-hero-copy,.candidate-progress{position:relative;z-index:1}
+.candidate-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.7px;font-weight:800;color:#a9e7f4}
+.candidate-hero h2{font-size:clamp(28px,3vw,42px);line-height:1.1;letter-spacing:-1.4px;max-width:590px;margin:15px 0 12px;color:white}
+.candidate-hero p{color:#d2e3ff;font-size:15px;max-width:510px;line-height:1.6}
+.candidate-hero-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.candidate-hero-chips span{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #ffffff2c;background:#ffffff12;border-radius:999px;font-size:12px;color:#e6f0ff}
+.candidate-progress{justify-self:end;display:flex;align-items:center;flex-direction:column;gap:7px;text-align:center}
+.candidate-progress-ring{width:126px;height:126px;padding:9px;border-radius:50%;display:grid;place-items:center}
+.candidate-progress-ring>div{background:#163b7b;border-radius:50%;width:100%;height:100%;display:grid;place-content:center;font-size:32px;font-weight:800;letter-spacing:-1px}
+.candidate-progress-ring small{font-size:14px}
+.candidate-progress strong{font-size:13px}
+.candidate-progress>span{font-size:11px;color:#c9dcff}
+.candidate-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.candidate-overview>div{display:grid;grid-template-columns:32px 1fr;column-gap:8px;align-items:center;background:#fff;border:1px solid var(--hf-line);border-radius:16px;padding:18px;box-shadow:0 3px 12px #152e5208}
+.candidate-overview svg{grid-row:span 2;color:#2875e8;background:#edf4ff;border-radius:10px;box-sizing:content-box;padding:8px}
+.candidate-overview strong{font-size:24px;line-height:1}
+.candidate-overview span{font-size:11px;color:#6a7990;margin-top:6px}
+.candidate-section-heading{display:flex;justify-content:space-between;align-items:center;padding:15px 2px 0;margin-top:7px}
+.candidate-section-heading h2{font-size:23px;letter-spacing:-.8px;margin:6px 0}
+.candidate-section-heading p{font-size:13px;color:#687c97;margin:0}
+.candidate-step{font-size:10px;letter-spacing:1.5px;font-weight:800;color:#2b70d9}
+.candidate-section-heading>svg{color:#4e85d5}
+.candidate-hub>.panel{border-radius:20px}
+.candidate-hub .panel-head{padding-bottom:16px;border-bottom:1px solid #edf0f6}
+.candidate-hub .profile-group{padding:21px 0;margin-top:12px}
+.candidate-hub .profile-group>button{border:1px dashed #90b3eb;background:#f3f7ff;color:#205ec1;font-weight:700;border-radius:10px}
+.candidate-hub .profile-entry{align-items:center;background:#f9fbfe;border:1px solid #e9eef7;padding:10px;border-radius:12px}
+.candidate-hub .profile-entry button{color:#a14343}
+.candidate-hub .upload-choice{flex:1;min-width:175px;background:#f8faff;border:1px dashed #aac3e7;border-radius:14px;padding:18px}
+.candidate-hub .upload-choice input{width:100%;font-size:11px}
+.candidate-hub .document-uploads{gap:12px}
+.candidate-hub .job-status{border:1px solid #dce9fb;color:#24528c}
+.candidate-hub .screening-details{border-radius:14px;background:#f7faff}
+@media(max-width:1050px){.candidate-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.candidate-hero{grid-template-columns:minmax(0,1fr) 160px}.candidate-progress-ring{width:105px;height:105px}}
+@media(max-width:700px){.sidebar{width:100%;height:auto;position:relative}.main{padding:20px 15px}.candidate-hero{grid-template-columns:1fr;padding:28px 23px}.candidate-progress{justify-self:start;flex-direction:row;text-align:left;flex-wrap:wrap}.candidate-progress-ring{width:76px;height:76px;padding:6px}.candidate-progress-ring>div{font-size:22px}.candidate-hero h2{font-size:30px}.candidate-overview{gap:9px}.candidate-overview>div{padding:12px;grid-template-columns:1fr}.candidate-overview svg{grid-row:auto;margin-bottom:9px}.candidate-section-heading h2{font-size:20px}.candidate-hub .profile-entry{flex-direction:column;align-items:stretch}.candidate-hub .profile-entry input{min-width:0;width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
