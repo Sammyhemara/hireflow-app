@@ -2,6 +2,8 @@ import {useEffect,useState} from "react";
 import type {User} from "@supabase/supabase-js";
 import {supabase} from "./supabase";
 import DocumentSharing from "./DocumentSharing";
+import ResumeImport from "./ResumeImport";
+import type {ResumeDraft} from "./ResumeImport";
 type Entry={name:string;detail:string};
 type CandidateProfile={headline:string;preferred_location:string;summary:string;availability:string;experience:Entry[];qualifications:Entry[];licences:Entry[]};
 type Doc={id:string;storage_path:string;document_type:string;original_filename:string;verification_status:string;created_at:string};
@@ -19,6 +21,7 @@ export default function CandidateProfileHub({user}:{user:User}){
  async function remove(doc:Doc){if(!supabase)return;setBusy(true);const {error:storageError}=await supabase.storage.from(bucket).remove([doc.storage_path]);if(storageError){setNotice(storageError.message);setBusy(false);return;}const {error}=await supabase.from("candidate_documents").delete().eq("id",doc.id);if(error)setNotice(error.message);else{setDocs(prev=>prev.filter(d=>d.id!==doc.id));setNotice("Document removed.");}setBusy(false);}
  if(loading)return <section className="panel"><p>Loading your candidate profile...</p></section>;
  return <div className="job-creator">
+ <ResumeImport onUpload={async file=>{await upload(file,"resume");}} onApply={(draft:ResumeDraft)=>setProfile(prev=>({...prev,headline:prev.headline||draft.headline,summary:prev.summary||draft.summary,experience:[...prev.experience,...draft.experience].slice(0,30),qualifications:[...prev.qualifications,...draft.qualifications].slice(0,30),licences:[...prev.licences,...draft.licences].slice(0,30)}))}/>
  <section className="panel"><div className="panel-head"><div><h2>My Candidate Profile</h2><p>Build your reusable profile for future applications.</p></div><span className="tag">Private profile</span></div>
  <div className="job-form-grid">
  <label>Professional headline<input maxLength={160} value={profile.headline||""} onChange={e=>field("headline",e.target.value)} placeholder="e.g. Experienced HR Driver"/></label>
