@@ -1,4 +1,5 @@
 import {useEffect,useState} from "react";
+import {Sparkles,ShieldCheck,FileText,BriefcaseBusiness,GraduationCap,IdCard,ArrowUpRight} from "lucide-react";
 import type {User} from "@supabase/supabase-js";
 import {supabase} from "./supabase";
 import DocumentSharing from "./DocumentSharing";
@@ -20,9 +21,14 @@ export default function CandidateProfileHub({user}:{user:User}){
  async function view(doc:Doc){if(!supabase)return;const {data,error}=await supabase.storage.from(bucket).createSignedUrl(doc.storage_path,60);if(error)setNotice(error.message);else if(data?.signedUrl)window.open(data.signedUrl,"_blank","noopener,noreferrer");}
  async function remove(doc:Doc){if(!supabase)return;setBusy(true);const {error:storageError}=await supabase.storage.from(bucket).remove([doc.storage_path]);if(storageError){setNotice(storageError.message);setBusy(false);return;}const {error}=await supabase.from("candidate_documents").delete().eq("id",doc.id);if(error)setNotice(error.message);else{setDocs(prev=>prev.filter(d=>d.id!==doc.id));setNotice("Document removed.");}setBusy(false);}
  if(loading)return <section className="panel"><p>Loading your candidate profile...</p></section>;
- return <div className="job-creator">
+ const completeness=[Boolean(profile.headline),Boolean(profile.summary),Boolean(profile.preferred_location),profile.availability!=="not_specified",profile.experience.length>0,profile.qualifications.length>0,profile.licences.length>0,docs.some(d=>d.document_type==="resume")].filter(Boolean).length;
+ return <div className="job-creator candidate-hub">
+ <section className="candidate-hero"><div className="candidate-hero-copy"><span className="candidate-kicker"><Sparkles size={15}/> YOUR CAREER, SIMPLIFIED</span><h2>Build a profile that works for you.</h2><p>One professional profile. More opportunities. Less repetitive paperwork.</p><div className="candidate-hero-chips"><span><ShieldCheck size={15}/> Private by default</span><span><FileText size={15}/> Resume-powered</span></div></div><div className="candidate-progress"><div className="candidate-progress-ring" style={{background:`conic-gradient(#65e5c6 ${completeness/8*100}%,#ffffff2a 0)`}}><div>{Math.round(completeness/8*100)}<small>%</small></div></div><strong>Profile completeness</strong><span>{completeness} of 8 steps completed</span></div></section>
+ <div className="candidate-overview"><div><BriefcaseBusiness size={19}/><strong>{profile.experience.length}</strong><span>Experience entries</span></div><div><GraduationCap size={19}/><strong>{profile.qualifications.length}</strong><span>Qualifications</span></div><div><IdCard size={19}/><strong>{profile.licences.length}</strong><span>Licences & tickets</span></div><div><FileText size={19}/><strong>{docs.length}</strong><span>Documents</span></div></div>
+ <div className="candidate-section-heading"><div><span className="candidate-step">01 / FAST START</span><h2>Import your resume</h2><p>Turn your existing resume into a profile you can edit and reuse.</p></div><ArrowUpRight size={21}/></div>
  <ResumeImport onUpload={async file=>{await upload(file,"resume");}} onApply={(draft:ResumeDraft)=>setProfile(prev=>({...prev,headline:prev.headline||draft.headline,summary:prev.summary||draft.summary,experience:[...prev.experience,...draft.experience].slice(0,30),qualifications:[...prev.qualifications,...draft.qualifications].slice(0,30),licences:[...prev.licences,...draft.licences].slice(0,30)}))}/>
- <section className="panel"><div className="panel-head"><div><h2>My Candidate Profile</h2><p>Build your reusable profile for future applications.</p></div><span className="tag">Private profile</span></div>
+ <div className="candidate-section-heading"><div><span className="candidate-step">02 / YOUR STORY</span><h2>Professional details</h2><p>Show employers what makes you a great fit.</p></div></div>
+ <section className="panel candidate-profile-panel"><div className="panel-head"><div><h2>My Candidate Profile</h2><p>Build your reusable profile for future applications.</p></div><span className="tag">Private profile</span></div>
  <div className="job-form-grid">
  <label>Professional headline<input maxLength={160} value={profile.headline||""} onChange={e=>field("headline",e.target.value)} placeholder="e.g. Experienced HR Driver"/></label>
  <label>Preferred location<input maxLength={160} value={profile.preferred_location||""} onChange={e=>field("preferred_location",e.target.value)} placeholder="e.g. Sydney NSW"/></label>
@@ -34,10 +40,12 @@ export default function CandidateProfileHub({user}:{user:User}){
  <button onClick={()=>add(key)} disabled={profile[key].length>=30}>+ Add {key==="experience"?"experience":key==="licences"?"licence":"qualification"}</button></div>)}
  <div className="job-actions"><button className="auth-submit" disabled={busy} onClick={()=>void save()}>{busy?"Saving...":"Save Profile"}</button></div>
  </section>
- <section className="panel"><h2>Documents & verification</h2><p>Upload your resume, qualifications and licences. Documents remain private to your account in this phase. Uploads are not automatically verified.</p>
+ <div className="candidate-section-heading"><div><span className="candidate-step">03 / YOUR CREDENTIALS</span><h2>Documents & verification</h2><p>Keep important files organised and under your control.</p></div></div>
+ <section className="panel candidate-documents-panel"><h2>Documents & verification</h2><p>Upload your resume, qualifications and licences. Documents remain private to your account in this phase. Uploads are not automatically verified.</p>
  <div className="document-uploads">{(["resume","qualification","licence","other"] as const).map(kind=><label key={kind} className="upload-choice">Upload {kind}<input type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" disabled={busy} onChange={e=>{const file=e.target.files?.[0]||null;void upload(file,kind);e.target.value="";}}/></label>)}</div>
  {docs.length===0?<p>No documents uploaded yet.</p>:<div className="jobs">{docs.map(doc=><article className="job" key={doc.id}><div><strong>{doc.original_filename}</strong><p>{doc.document_type} · {doc.verification_status.replace(/_/g," ")}</p></div><button onClick={()=>void view(doc)}>View</button><button disabled={busy} onClick={()=>void remove(doc)}>Delete</button></article>)}</div>}
  </section>
+ <div className="candidate-section-heading"><div><span className="candidate-step">04 / YOUR CONTROL</span><h2>Share securely</h2><p>You decide what recruiters can access.</p></div></div>
  <DocumentSharing user={user}/>
  {notice&&<section className="panel"><p role="status">{notice}</p></section>}
  </div>;
