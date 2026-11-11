@@ -19,7 +19,7 @@ async function extract(file:File){
  if(file.type==="application/pdf"||file.name.toLowerCase().endsWith(".pdf")){
   const doc=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
   const parts:string[]=[];
-  for(let i=1;i<=Math.min(doc.numPages,20);i++){const page=await doc.getPage(i);const content=await page.getTextContent();parts.push(content.items.map(item=>("str" in item?item.str+("hasEOL" in item&&item.hasEOL?"\\n":" "):"")).join(""));}
+  for(let i=1;i<=Math.min(doc.numPages,20);i++){const page=await doc.getPage(i);const content=await page.getTextContent();parts.push(content.items.map(item=>("str" in item?item.str+("hasEOL" in item&&item.hasEOL?"\n":" "):"")).join(""));}
   return parts.join("\n");
  }
  if(file.name.toLowerCase().endsWith(".docx")){
