@@ -41,3 +41,12 @@
 .screening-detail:last-child{border-bottom:0}
 .screening-detail p{margin:5px 0}
 .review-card h3{margin:0 0 8px}
+
+
+.profile-group{padding:18px 0;border-top:1px solid #e5e9f0;margin-top:16px}
+.profile-entry{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+.profile-entry input{flex:1;min-width:180px;padding:11px;border:1px solid #d8dfeb;border-radius:9px}
+.profile-entry button,.profile-group>button,.job-creator .job button{padding:9px 13px;border:1px solid #d8dfeb;border-radius:9px;background:white;cursor:pointer}
+.document-uploads{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0}
+.upload-choice{display:flex;flex-direction:column;gap:8px;min-width:180px;padding:12px;border:1px solid #d8dfeb;border-radius:10px;font-size:13px;font-weight:600}
+.upload-choice input{max-width:230px;font-size:12px}
