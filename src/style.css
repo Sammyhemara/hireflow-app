@@ -21,3 +21,15 @@
 .job-actions .auth-submit{width:auto;margin:0;background:#1665d8;color:white;border:0}
 .job-status{padding:12px;border-radius:9px;background:#f0f6ff}
 @media(max-width:700px){.job-form-grid{grid-template-columns:1fr}.job-form-grid .job-wide{grid-column:1}.question-row{align-items:stretch}}
+
+
+.job-preline{white-space:pre-wrap}
+.screening-answer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #e5e9f0;flex-wrap:wrap}
+.screening-answer select,.review-card select{padding:10px;border:1px solid #d8dfeb;border-radius:8px;background:#fff}
+.job-cover{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.job-cover textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d8dfeb;border-radius:10px}
+.review-group{padding:14px 0;border-top:1px solid #e5e9f0}
+.review-card{padding:15px;border:1px solid #e5e9f0;border-radius:10px;margin:12px 0}
+.review-card p{font-size:13px;color:#5b6475}
+.review-card label{display:flex;gap:12px;align-items:center;font-size:13px}
+.question-row select{border:1px solid #d8dfeb;border-radius:8px;padding:8px;background:#fff}
