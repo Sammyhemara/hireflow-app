@@ -1,6 +1,7 @@
 import {useEffect,useState} from "react";
 import type {User} from "@supabase/supabase-js";
 import {supabase} from "./supabase";
+import SharedApplicantDocuments from "./SharedApplicantDocuments";
 type Job={id:string;title:string};
 type Question={text:string;required:boolean;expected_answer?:boolean};
 type Applicant={id:string;job_id:string;applicant_id:string;applicant_name:string;answers:(boolean|null)[];cover_note:string;screening_snapshot:Question[];screening_snapshot_source:string;screening_result:string;screening_explanation:string;review_status:string;created_at:string};
@@ -38,6 +39,7 @@ export default function ApplicantReview({user}:{user:User}){
   <p><strong>Screening:</strong> {a.screening_explanation}</p>
   {a.screening_snapshot_source!=="submission"&&<p className="job-status">Legacy application: questions shown are reconstructed from the currently available job record and may differ from those originally submitted.</p>}
   <div className="screening-details"><h4>Questions and answers</h4>{a.screening_snapshot.length===0?<p>No saved questions available.</p>:a.screening_snapshot.map((q,i)=><div className="screening-detail" key={i}><strong>{i+1}. {q.text}</strong><p>Applicant: {a.answers[i]===null||a.answers[i]===undefined?"Unanswered":a.answers[i]?"Yes":"No"} · {q.required?"Essential":"Preferred"}</p><p>{outcome(q,a.answers[i]??null)}</p></div>)}</div>
+  <SharedApplicantDocuments applicationIds={[a.id]}/>
   {a.cover_note&&<p className="job-preline"><strong>Cover note:</strong> {a.cover_note}</p>}
   <label><strong>Human review decision</strong> <select value={a.review_status} onChange={e=>void update(a,e.target.value)}><option value="new">New</option><option value="reviewing">Reviewing</option><option value="shortlisted">Shortlisted</option><option value="declined">Declined</option></select></label>
  </article>)}</div>)}
