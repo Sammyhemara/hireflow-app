@@ -4,6 +4,7 @@ import { supabase } from "./supabase";
 import JobCreator from "./JobCreator";
 import JobDiscovery from "./JobDiscovery";
 import ApplicantReview from "./ApplicantReview";
+import CandidateProfileHub from "./CandidateProfileHub";
 import { BriefcaseBusiness, Building2, Users, MessageSquare, CalendarDays, LayoutDashboard, ShieldCheck, Filter } from "lucide-react";
 type AccountType="employer"|"agency"|"jobseeker";
 export default function AccountHome({user,onSignOut}:{user:User,onSignOut:()=>void}){
@@ -51,7 +52,7 @@ export default function AccountHome({user,onSignOut}:{user:User,onSignOut:()=>vo
  </aside>
  <main className="main">
   <header><div><span className="eyebrow">{title[accountType].toUpperCase()} DASHBOARD</span><h1>{page==="Overview"?"Welcome to HireFlow":page}</h1><p>Signed in as {user.email}</p></div><button className="demo-pill auth-open" onClick={onSignOut}>Sign out</button></header>
-  {accountType==="jobseeker"&&(page==="Find Jobs"||page==="My Applications")?<JobDiscovery user={user} applicationsOnly={page==="My Applications"}/>:accountType!=="jobseeker"&&page==="Applicants"?<ApplicantReview user={user}/>:accountType!=="jobseeker"&&page==="Candidates"?<ApplicantReview user={user}/>:accountType!=="jobseeker"&&(page==="My Jobs"||page==="Jobs")?<JobCreator user={user}/>:page==="Overview"?<>
+  {accountType==="jobseeker"&&page==="Profile"?<CandidateProfileHub user={user}/>:accountType==="jobseeker"&&(page==="Find Jobs"||page==="My Applications")?<JobDiscovery user={user} applicationsOnly={page==="My Applications"}/>:accountType!=="jobseeker"&&page==="Applicants"?<ApplicantReview user={user}/>:accountType!=="jobseeker"&&page==="Candidates"?<ApplicantReview user={user}/>:accountType!=="jobseeker"&&(page==="My Jobs"||page==="Jobs")?<JobCreator user={user}/>:page==="Overview"?<>
    <section className="metrics">{(accountType==="employer"?["Active jobs","Applicants","Interviews","Messages"]:accountType==="agency"?["Clients","Open jobs","Submissions","Messages"]:["Applications","Saved jobs","Interviews","Messages"]).map((label,i)=>{const Icon=[BriefcaseBusiness,Users,CalendarDays,MessageSquare][i];return <article className="metric" key={label}><div className="metric-icon"><Icon size={20}/></div><span>{label}</span><strong>—</strong></article>;})}</section>
    <section className="panel"><div className="panel-head"><div><h2>{title[accountType]} dashboard</h2><p>Your account is connected to HireFlow Development.</p></div><span className="tag">Development</span></div>
     <p>{message}</p><p>Job advertising, applications, interviews and messaging will appear here as those features are built. No fictional recruitment figures are shown in signed-in accounts.</p>
