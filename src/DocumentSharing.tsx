@@ -1,0 +1,20 @@
+import {useEffect,useState} from "react";
+import type {User} from "@supabase/supabase-js";
+import {supabase} from "./supabase";
+type Doc={id:string;original_filename:string;storage_path:string;verification_status:string;document_type:string};
+type Application={id:string;job_id:string};
+type Job={id:string;title:string};
+type Share={id:string;document_id:string;application_id:string;revoked_at:string|null;expires_at:string};
+export default function DocumentSharing({user}:{user:User}){
+ const [docs,setDocs]=useState<Doc[]>([]),[apps,setApps]=useState<Application[]>([]),[jobs,setJobs]=useState<Job[]>([]),[shares,setShares]=useState<Share[]>([]),[docId,setDocId]=useState(""),[appId,setAppId]=useState(""),[message,setMessage]=useState(""),[busy,setBusy]=useState(false);
+ async function refresh(){if(!supabase)return;const [d,a,s]=await Promise.all([supabase.from("candidate_documents").select("id,original_filename,storage_path,verification_status,document_type").eq("user_id",user.id),supabase.from("job_applications").select("id,job_id").eq("applicant_id",user.id),supabase.from("candidate_document_shares").select("id,document_id,application_id,revoked_at,expires_at").eq("candidate_id",user.id)]);if(d.error||a.error||s.error){setMessage(d.error?.message||a.error?.message||s.error?.message||"Unable to load sharing.");return;}setDocs((d.data||[]) as Doc[]);const applications=(a.data||[]) as Application[];setApps(applications);setShares((s.data||[]) as Share[]);const ids=[...new Set(applications.map(x=>x.job_id))];if(ids.length){const j=await supabase.from("jobs").select("id,title").in("id",ids);if(!j.error)setJobs((j.data||[]) as Job[]);}}
+ useEffect(()=>{void refresh();},[user.id]);
+ async function share(){if(!supabase||!docId||!appId)return;setBusy(true);const {error}=await supabase.from("candidate_document_shares").insert({document_id:docId,application_id:appId,candidate_id:user.id});setMessage(error?error.message:"Document shared for 30 days. You can revoke access below.");await refresh();setBusy(false);}
+ async function revoke(id:string){if(!supabase)return;setBusy(true);const {error}=await supabase.from("candidate_document_shares").update({revoked_at:new Date().toISOString()}).eq("id",id);setMessage(error?error.message:"Access revoked.");await refresh();setBusy(false);}
+ const active=shares.filter(s=>!s.revoked_at&&new Date(s.expires_at).getTime()>Date.now());
+ return <section className="panel"><h2>Share documents with recruiters</h2><p>Choose a document and a job application. Only the recruiter responsible for that application can access the selected document. Access expires after 30 days or when you revoke it.</p>
+ {docs.length===0||apps.length===0?<p>Upload a document and apply for a job before sharing.</p>:<div className="job-form-grid"><label>Document<select value={docId} onChange={e=>setDocId(e.target.value)}><option value="">Choose document</option>{docs.map(d=><option key={d.id} value={d.id}>{d.original_filename} ({d.verification_status})</option>)}</select></label><label>Job application<select value={appId} onChange={e=>setAppId(e.target.value)}><option value="">Choose application</option>{apps.map(a=><option key={a.id} value={a.id}>{jobs.find(j=>j.id===a.job_id)?.title||"Application"} — {a.id.slice(0,8)}</option>)}</select></label><button className="auth-submit" disabled={busy||!docId||!appId||active.some(s=>s.document_id===docId&&s.application_id===appId)} onClick={()=>void share()}>Share selected document</button></div>}
+ <h3>Active sharing permissions ({active.length})</h3>{active.length===0?<p>No documents currently shared.</p>:active.map(s=><div className="profile-entry" key={s.id}><span>{docs.find(d=>d.id===s.document_id)?.original_filename||"Document"} · {jobs.find(j=>j.id===apps.find(a=>a.id===s.application_id)?.job_id)?.title||"Application"} · Until {new Date(s.expires_at).toLocaleDateString("en-AU")}</span><button disabled={busy} onClick={()=>void revoke(s.id)}>Revoke access</button></div>)}
+ {message&&<p role="status" className="job-status">{message}</p>}
+ </section>;
+}
